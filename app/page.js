@@ -304,17 +304,6 @@ export default function Home() {
       <section className={styles.heroSection}>
         <div className={styles.heroVideoCol}>
 
-          {/* Miniature en fallback (toujours présente derrière) */}
-          <img
-            src="/video/hero-thumbnail.jpg"
-            alt="hero"
-            style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover", zIndex: 0
-            }}
-          />
-
           {/* Vidéo native : autoplay sur TOUS les appareils, y compris iOS */}
           <video
             autoPlay
