@@ -9,6 +9,7 @@
   padding: 0 5%;
   height: 64px;
   transition: background 0.4s ease, backdrop-filter 0.4s ease, border-bottom 0.4s ease;
+  overflow: hidden;
 }
 .navbarScrolled {
   background: rgba(0, 0, 0, 0.75);
