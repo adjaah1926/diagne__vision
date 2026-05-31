@@ -231,7 +231,7 @@ export default function Home() {
       {/* ── NAVBAR ── */}
       <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ""}`}>
         <img
-          src="/logo.jpeg"
+          src="/logo.png"
           alt="Diagne Vision"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className={styles.navbarLogo}
