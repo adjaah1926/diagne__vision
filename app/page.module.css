@@ -116,7 +116,7 @@
   border-bottom: 1px solid var(--border);
 }
 .aboutText { flex: 1; }
-.aboutSkills { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.aboutSkills { flex: 1; display: flex; flex-direction: column; gap: 20px; padding-top: 120px; }
 
 /* ── PORTFOLIO ── */
 .portfolioSection { padding: 100px 5%; border-bottom: 1px solid var(--border); }

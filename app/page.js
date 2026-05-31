@@ -357,11 +357,11 @@ export default function Home() {
             Explore mon<br />univers visuel
           </h2>
           <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px", marginBottom: "16px" }}>
-            Je ne filme pas des événements. Je capture des instants qui ne reviendront jamais et je les rends éternels.
-          </p>
-          <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px" }}>
-            De Dakar au monde, je crée des visuels qui marquent les esprits, servent les marques et racontent des histoires vraies.
-          </p>
+            Je suis Cheikh Diagne, vidéaste et réalisateur basé à Dakar, Sénégal. Passionné par l'art de raconter des histoires à travers l'image, je transforme des idées, des moments et des émotions en visuels captivants.
+            </p>
+            <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px" }}>
+              Spécialisé dans la couverture d'événements, les contenus de marque, les clips promotionnels et les projets artistiques, je mets ma créativité au service de chaque réalisation pour créer des expériences visuelles qui inspirent et laissent une empreinte durable.
+            </p>
         </motion.div>
         <motion.div className={styles.aboutSkills}
           initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
