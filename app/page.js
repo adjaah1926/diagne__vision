@@ -316,7 +316,7 @@ export default function Home() {
               objectFit: "cover", zIndex: 1
             }}
           >
-            <source src="/Video/hero.mp4" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dlwymfyzv/video/upload/v1780239433/hero_duhazc.mp4" type="video/mp4" />
           </video>
 
           {/* Overlay gradient */}
