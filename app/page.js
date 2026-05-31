@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
 const V = (id) => ({
-  src: `https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1&background=1`,
-  lightboxSrc: `https://player.vimeo.com/video/${id}?autoplay=1`,
+  src: `https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
+  lightboxSrc: `https://player.vimeo.com/video/${id}?autoplay=1&playsinline=1`,
+  thumbnail: `https://vumbnail.com/${id}.jpg`,
+  id,
   type: "vimeo"
 });
 
@@ -116,11 +118,97 @@ const projects = [
   },
 ];
 
+// VideoCard : iframe sur desktop, miniature sur mobile
+function VideoCard({ video, onClick, isMobile }) {
+  const containerRef = useRef(null);
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && iframeRef.current) {
+            try {
+              iframeRef.current.contentWindow.postMessage(
+                JSON.stringify({ method: "play" }),
+                "https://player.vimeo.com"
+              );
+            } catch (e) {
+              const src = iframeRef.current.src;
+              iframeRef.current.src = "";
+              setTimeout(() => { if (iframeRef.current) iframeRef.current.src = src; }, 50);
+            }
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  return (
+    <motion.div
+      ref={containerRef}
+      className={styles.videoCard}
+      whileHover={{ y: -4 }}
+      onClick={onClick}
+      style={{ cursor: "pointer", position: "relative" }}
+    >
+      {isMobile ? (
+        /* ── MOBILE : miniature + bouton play ── */
+        <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#111" }}>
+          <img
+            src={video.thumbnail}
+            alt={video.name}
+            loading="lazy"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{
+              width: "48px", height: "48px", borderRadius: "50%",
+              border: "2px solid var(--accent)",
+              background: "rgba(201,169,110,0.2)",
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <div style={{ width: 0, height: 0, borderTop: "9px solid transparent", borderBottom: "9px solid transparent", borderLeft: "16px solid var(--accent)", marginLeft: "4px" }} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* ── DESKTOP : iframe autoplay ── */
+        <>
+          <iframe
+            ref={iframeRef}
+            src={video.src}
+            style={{ width: "100%", aspectRatio: "16/9", border: "none", display: "block", pointerEvents: "none" }}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+          />
+          <div style={{ position: "absolute", inset: 0, zIndex: 1, cursor: "pointer" }} />
+        </>
+      )}
+      <div className={styles.videoName}>
+        <p>{video.name}</p>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("Tout");
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -196,8 +284,8 @@ export default function Home() {
             >
               <iframe
                 src={selectedVideo.lightboxSrc}
-                style={{ width: "100%", height: "500px", border: "none", display: "block" }}
-                allow="autoplay; fullscreen"
+                style={{ width: "100%", height: isMobile ? "250px" : "500px", border: "none", display: "block" }}
+                allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
               />
               <div className={styles.lightboxInfo}>
@@ -215,14 +303,40 @@ export default function Home() {
       {/* ── HERO ── */}
       <section className={styles.heroSection}>
         <div className={styles.heroVideoCol}>
-          <iframe
-            src="https://player.vimeo.com/video/1197029516?autoplay=1&muted=1&loop=1&background=1"
-            style={{ width: "100%", height: "100%", border: "none", position: "absolute", top: 0, left: 0 }}
-            allow="autoplay; fullscreen"
+
+          {/* Miniature en fallback (toujours présente derrière) */}
+          <img
+            src="/video/hero-thumbnail.jpg"
+            alt="hero"
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover", zIndex: 0
+            }}
           />
-          <div style={{ position: "absolute", inset: 0,
-            background: "linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.5))" }} />
+
+          {/* Vidéo native : autoplay sur TOUS les appareils, y compris iOS */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute", inset: 0,
+              width: "100%", height: "100%",
+              objectFit: "cover", zIndex: 1
+            }}
+          >
+            <source src="/video/hero.mp4" type="video/mp4" />
+          </video>
+
+          {/* Overlay gradient */}
+          <div style={{
+            position: "absolute", inset: 0, zIndex: 2,
+            background: "linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.5))"
+          }} />
         </div>
+
         <div className={styles.heroTextCol}>
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             style={{ color: "var(--accent)", letterSpacing: "4px", fontSize: "12px", marginBottom: "24px", textTransform: "uppercase" }}
@@ -305,22 +419,12 @@ export default function Home() {
               </div>
               <div className={styles.videosGrid}>
                 {project.videos.map((video, j) => (
-                  <motion.div key={j} className={styles.videoCard}
-                    whileHover={{ y: -4 }}
+                  <VideoCard
+                    key={j}
+                    video={video}
+                    isMobile={isMobile}
                     onClick={() => setSelectedVideo(video)}
-                    style={{ cursor: "pointer", position: "relative" }}
-                  >
-                    <iframe
-                      src={video.src}
-                      style={{ width: "100%", aspectRatio: "16/9", border: "none", display: "block", pointerEvents: "none" }}
-                      allow="autoplay; fullscreen"
-                    />
-                    {/* div transparent pour capturer le clic */}
-                    <div style={{ position: "absolute", inset: 0, zIndex: 1, cursor: "pointer" }} />
-                    <div className={styles.videoName}>
-                      <p>{video.name}</p>
-                    </div>
-                  </motion.div>
+                  />
                 ))}
               </div>
             </motion.div>
