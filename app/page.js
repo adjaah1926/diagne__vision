@@ -8,7 +8,7 @@ import styles from "./page.module.css";
 // so_2 = capture à la seconde 2, fonctionne même si le nom contient ".mp4"
 const C = (url) => {
   const thumbnail = url
-    .replace("/video/upload/", "/video/upload/so_2/")
+    .replace("/video/upload/", "/video/upload/so_2,f_auto,q_auto,w_640/")
     .replace(/\.mp4(?=[^.]*$)/, ".jpg");
   return { src: url, lightboxSrc: url, thumbnail, type: "cloudinary" };
 };
