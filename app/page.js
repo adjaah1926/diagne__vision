@@ -11,7 +11,7 @@ const V = (id, hash) => {
   return {
     src: `${base}&autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
     lightboxSrc: `${base}&autoplay=1&loop=1&playsinline=1&title=0&byline=0&portrait=0&pip=0&dnt=1&autopause=0`,
-    thumbnail: `https://vumbnail.com/${id}.jpg`,
+    thumbnail: `https://i.vimeocdn.com/video/${id}_640.jpg`,
     id,
     type: "vimeo",
   };
