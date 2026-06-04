@@ -260,11 +260,13 @@ function Lightbox({ video, onClose, isMobile }) {
             />
           ) : (
             <iframe
-              src={video.lightboxSrc}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
+  src={video.lightboxSrc}
+  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }}
+  allow="autoplay; fullscreen; picture-in-picture"
+  allowFullScreen
+  webkit-allowfullscreen="true"
+  mozallowfullscreen="true"
+/>
           )}
         </div>
         <div className={styles.lightboxInfo}>
