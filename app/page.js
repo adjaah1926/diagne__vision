@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
 // Cloudinary video helper
-// so_2 = capture à la seconde 2, fonctionne même si le nom contient ".mp4"
 const C = (url) => {
   const thumbnail = url
     .replace("/video/upload/", "/video/upload/so_2,f_auto,q_auto,w_640/")
@@ -166,7 +165,6 @@ function VideoCard({ video, onClick, isMobile, priority }) {
       style={{ cursor: "pointer", position: "relative" }}
     >
       {isMobile ? (
-        /* ── MOBILE : miniature + bouton play ── */
         <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#111" }}>
           <img
             src={video.thumbnail}
@@ -197,7 +195,6 @@ function VideoCard({ video, onClick, isMobile, priority }) {
           </div>
         </div>
       ) : (
-        /* ── DESKTOP ── */
         <>
           {video.type === "cloudinary" ? (
             <video
@@ -225,7 +222,7 @@ function VideoCard({ video, onClick, isMobile, priority }) {
 }
 
 // ─── Lightbox ────────────────────────────────────────────────────────────────
-function Lightbox({ video, onClose, isMobile }) {
+function Lightbox({ video, onClose }) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -253,20 +250,16 @@ function Lightbox({ video, onClose, isMobile }) {
           {video.type === "cloudinary" ? (
             <video
               src={video.lightboxSrc}
-              autoPlay
-              controls
-              playsInline
+              autoPlay controls playsInline
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block", background: "#000" }}
             />
           ) : (
             <iframe
-  src={video.lightboxSrc}
-  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }}
-  allow="autoplay; fullscreen; picture-in-picture"
-  allowFullScreen
-  webkit-allowfullscreen="true"
-  mozallowfullscreen="true"
-/>
+              src={video.lightboxSrc}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }}
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowFullScreen
+            />
           )}
         </div>
         <div className={styles.lightboxInfo}>
@@ -292,7 +285,6 @@ export default function Home() {
   const [scrolled,       setScrolled]       = useState(false);
   const [menuOpen,       setMenuOpen]       = useState(false);
   const [isMobile,       setIsMobile]       = useState(false);
-
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
     check();
@@ -338,6 +330,7 @@ export default function Home() {
           <li><a onClick={() => handleNavClick("portfolio")}>Réalisations</a></li>
           <li><a onClick={() => handleNavClick("contact")}>Contact</a></li>
         </ul>
+
         <button
           className={`${styles.hamburger} ${menuOpen ? styles.hamburgerOpen : ""}`}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -371,7 +364,6 @@ export default function Home() {
           <Lightbox
             video={selectedVideo}
             onClose={() => setSelectedVideo(null)}
-            isMobile={isMobile}
           />
         )}
       </AnimatePresence>
@@ -383,10 +375,17 @@ export default function Home() {
             autoPlay muted loop playsInline
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
           >
-          <source 
-  src="https://res.cloudinary.com/dlwymfyzv/video/upload/q_auto,w_720/v1780239433/hero_duhazc.mp4" 
-  type="video/mp4" 
-/>
+            {/* Version légère pour mobile */}
+            <source
+              media="(max-width: 768px)"
+              src="https://res.cloudinary.com/dlwymfyzv/video/upload/q_auto,w_720/v1780239433/hero_duhazc.mp4"
+              type="video/mp4"
+            />
+            {/* Version full pour desktop */}
+            <source
+              src="https://res.cloudinary.com/dlwymfyzv/video/upload/v1780239433/hero_duhazc.mp4"
+              type="video/mp4"
+            />
           </video>
           <div style={{
             position: "absolute", inset: 0, zIndex: 2,
@@ -522,6 +521,7 @@ export default function Home() {
             </p>
             <p style={{ color: "var(--gray)", fontSize: "13px" }}>Vidéaste • Dakar, Sénégal</p>
           </div>
+
           <div className={styles.footerLinks}>
             <a href="mailto:diagnevision08@gmail.com"
               style={{ color: "var(--gray)", fontSize: "13px", textDecoration: "none" }}>
@@ -535,6 +535,7 @@ export default function Home() {
               {[
                 { name: "Instagram", url: "https://www.instagram.com/diagne___vision/" },
                 { name: "TikTok",    url: "https://www.tiktok.com/@diagne__vision"     },
+                { name: "WhatsApp",  url: "https://wa.me/221778722627"                 },
               ].map((r) => (
                 <a key={r.name} href={r.url} target="_blank" rel="noreferrer"
                   style={{ color: "var(--accent)", fontSize: "12px", letterSpacing: "1px", textDecoration: "none" }}>
@@ -543,6 +544,7 @@ export default function Home() {
               ))}
             </div>
           </div>
+
           <p style={{
             width: "100%", textAlign: "center",
             color: "var(--gray)", fontSize: "12px",
