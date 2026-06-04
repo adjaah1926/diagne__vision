@@ -381,7 +381,10 @@ export default function Home() {
             autoPlay muted loop playsInline
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
           >
-            <source src="https://res.cloudinary.com/dlwymfyzv/video/upload/v1780239433/hero_duhazc.mp4" type="video/mp4" />
+          <source 
+  src="https://res.cloudinary.com/dlwymfyzv/video/upload/q_auto,w_720/v1780239433/hero_duhazc.mp4" 
+  type="video/mp4" 
+/>
           </video>
           <div style={{
             position: "absolute", inset: 0, zIndex: 2,
