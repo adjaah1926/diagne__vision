@@ -4,13 +4,18 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
-const V = (id) => ({
-  src: `https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
-  lightboxSrc: `https://player.vimeo.com/video/${id}?autoplay=1&playsinline=1`,
-  thumbnail: `https://vumbnail.com/${id}.jpg`,
-  id,
-  type: "vimeo"
-});
+const V = (id, hash) => {
+  const base = hash
+    ? `https://player.vimeo.com/video/${id}?h=${hash}`
+    : `https://player.vimeo.com/video/${id}`;
+  return {
+    src: `${base}&autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
+    lightboxSrc: `${base}&autoplay=1&loop=1&playsinline=1&title=0&byline=0&portrait=0&pip=0&dnt=1`,
+    thumbnail: `https://vumbnail.com/${id}.jpg`,
+    id,
+    type: "vimeo"
+  };
+};
 
 const categories = ["Tout", "Evénementiel", "Cinematic", "Publicité", "Corporate", "Lifestyle"];
 
@@ -20,9 +25,9 @@ const projects = [
     title: "Evénementiel",
     category: "Evénementiel",
     videos: [
-      { name: "Festival IPP", ...V("1197019404") },
-      { name: "Kankourang de Mbour", ...V("1197020077") },
-      { name: "Magal de Touba", ...V("1197020227") },
+      { name: "Festival IPP",        ...V("1197019404", "d4f1874a67") },
+      { name: "Kankourang de Mbour", ...V("1197020077", "5968e7d26e") },
+      { name: "Magal de Touba",      ...V("1197020227", "097f7f24a1") },
     ]
   },
   {
@@ -31,9 +36,9 @@ const projects = [
     category: "Evénementiel",
     year: "2025",
     videos: [
-      { name: "Ndiaye's Wedding", ...V("1197029314") },
-      { name: "Fatima's Wedding", ...V("1197027327") },
-      { name: "L'histoire de Mariam et Ibrahima", ...V("1197032512") },
+      { name: "Ndiaye's Wedding",                ...V("1198213193", "1e0d275864") },
+      { name: "Fatima's Wedding",                ...V("1198224228", "dc97f25825") },
+      { name: "L'histoire de Mariam et Ibrahima",...V("1198233916", "05d0bef075") },
     ]
   },
   {
@@ -41,9 +46,9 @@ const projects = [
     title: "Cinematic",
     category: "Cinematic",
     videos: [
-      { name: "Le Regard", ...V("1197020131") },
-      { name: "New Era", ...V("1197020425") },
-      { name: "Massalikoul Jinane", ...V("1197020234") },
+      { name: "Le Regard",          ...V("1197020131", "dd70cfbd16") },
+      { name: "New Era",            ...V("1197020425", "64cd969c0d") },
+      { name: "Massalikoul Jinane", ...V("1197020234", "c5d8c7e862") },
     ]
   },
   {
@@ -51,9 +56,9 @@ const projects = [
     title: "Sport",
     category: "Cinematic",
     videos: [
-      { name: "Salle de Sport", ...V("1197027417") },
-      { name: "BTS Athlétisme", ...V("1197027235") },
-      { name: "Sénégal CAN 2026", ...V("1197027415") },
+      { name: "Salle de Sport",   ...V("1198212888", "2befe0b8a9") },
+      { name: "BTS Athlétisme",   ...V("1198214059", "98a87dc113") },
+      { name: "Sénégal CAN 2026", ...V("1198224103", "1d6282f2bd") },
     ]
   },
   {
@@ -61,9 +66,9 @@ const projects = [
     title: "Institut Polytechnique Panafricain",
     category: "Publicité",
     videos: [
-      { name: "Présentation IPP", ...V("1197029683") },
-      { name: "Projet et valeurs", ...V("1197019936") },
-      { name: "Valeurs", ...V("1197019954") },
+      { name: "Présentation IPP",  ...V("1198213201", "116ac8f757") },
+      { name: "Projet et valeurs", ...V("1197019936", "1403cbbc15") },
+      { name: "Valeurs",           ...V("1197019954", "9937f11c6f") },
     ]
   },
   {
@@ -71,9 +76,9 @@ const projects = [
     title: "Hôtels",
     category: "Publicité",
     videos: [
-      { name: "Étoile du Lac", ...V("1196992907") },
-      { name: "Palm Beach", ...V("1197020465") },
-      { name: "Résidence Sokhna Fatou", ...V("1197019460") },
+      { name: "Étoile du Lac",          ...V("1196992907", "3077b6739d") },
+      { name: "Palm Beach",             ...V("1197020465", "8e02d7bc2e") },
+      { name: "Résidence Sokhna Fatou", ...V("1198212542", "440c49f80b") },
     ]
   },
   {
@@ -81,9 +86,9 @@ const projects = [
     title: "Placement de produit",
     category: "Publicité",
     videos: [
-      { name: "Mila collection", ...V("1197020387") },
-      { name: "Splash", ...V("1197019461") },
-      { name: "Sucre Mame Boy", ...V("1197019463") },
+      { name: "Mila collection", ...V("1197020387", "c630d11732") },
+      { name: "Splash",          ...V("1198224101", "3a9ac8cf8d") },
+      { name: "Sucre Mame Boy",  ...V("1198224102", "8d9a656677") },
     ]
   },
   {
@@ -91,9 +96,9 @@ const projects = [
     title: "Restaurant",
     category: "Publicité",
     videos: [
-      { name: "Grill Factory", ...V("1196993153") },
-      { name: "Puff puff", ...V("1196993116") },
-      { name: "Evivi", ...V("1196993000") },
+      { name: "Grill Factory", ...V("1198238301", "03935d70e8") },
+      { name: "Puff puff",     ...V("1196993116", "dcae6d07ad") },
+      { name: "Evivi",         ...V("1198224191", "466231d346") },
     ]
   },
   {
@@ -101,9 +106,9 @@ const projects = [
     title: "",
     category: "Corporate",
     videos: [
-      { name: "Fondation Lumière de Demain", ...V("1196993031") },
-      { name: "Cité COUD", ...V("1197030354") },
-      { name: "COUD", ...V("1197027233") },
+      { name: "Fondation Lumière de Demain", ...V("1196993031", "3971849049") },
+      { name: "Cité COUD",                  ...V("1198213529", "7aaac4afeb") },
+      { name: "COUD",                       ...V("1198214167", "74e37b7dea") },
     ]
   },
   {
@@ -111,9 +116,9 @@ const projects = [
     title: "",
     category: "Lifestyle",
     videos: [
-      { name: "Penda's", ...V("1197020464") },
-      { name: "Penda Lifestyle", ...V("1197020466") },
-      { name: "Life", ...V("1197020025") },
+      { name: "Penda's",         ...V("1197020464", "ec2fc114a9") },
+      { name: "Penda Lifestyle",  ...V("1197020466", "324a2d728c") },
+      { name: "Life",             ...V("1198237129", "6bf436d55d") },
     ]
   },
 ];
@@ -160,11 +165,17 @@ function VideoCard({ video, onClick, isMobile }) {
         /* ── MOBILE : miniature + bouton play ── */
         <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#111" }}>
           <img
-            src={video.thumbnail}
-            alt={video.name}
-            loading="lazy"
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-          />
+           src={video.thumbnail}
+           alt={video.name}
+           loading="lazy"
+           style={{ 
+            width: "100%", 
+            height: "100%", 
+            objectFit: "cover",  // 
+            // objectPosition: "center",  // 
+            // display: "block" 
+  }}
+/>
           <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{
               width: "48px", height: "48px", borderRadius: "50%",
@@ -283,11 +294,17 @@ export default function Home() {
                 borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)" }}
             >
               <iframe
-                src={selectedVideo.lightboxSrc}
-                style={{ width: "100%", height: isMobile ? "250px" : "500px", border: "none", display: "block" }}
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-              />
+              src={selectedVideo.lightboxSrc}
+              style={{ 
+                width: "100%", 
+                aspectRatio: "16/9",
+                height: "auto",
+                border: "none", 
+                display: "block" 
+               }}
+  allow="autoplay; fullscreen; picture-in-picture"
+  allowFullScreen
+/>
               <div className={styles.lightboxInfo}>
                 <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{selectedVideo.name}</h3>
                 <button onClick={() => setSelectedVideo(null)}
@@ -358,10 +375,10 @@ export default function Home() {
           </h2>
           <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px", marginBottom: "16px" }}>
             Je suis Cheikh Diagne, vidéaste et réalisateur basé à Dakar, Sénégal. Passionné par l'art de raconter des histoires à travers l'image, je transforme des idées, des moments et des émotions en visuels captivants.
-            </p>
-            <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px" }}>
-              Spécialisé dans la couverture d'événements, les contenus de marque, les clips promotionnels et les projets artistiques, je mets ma créativité au service de chaque réalisation pour créer des expériences visuelles qui inspirent et laissent une empreinte durable.
-            </p>
+          </p>
+          <p style={{ color: "var(--gray)", lineHeight: 1.8, fontSize: "15px" }}>
+            Spécialisé dans la couverture d'événements, les contenus de marque, les clips promotionnels et les projets artistiques, je mets ma créativité au service de chaque réalisation pour créer des expériences visuelles qui inspirent et laissent une empreinte durable.
+          </p>
         </motion.div>
         <motion.div className={styles.aboutSkills}
           initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
