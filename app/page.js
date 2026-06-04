@@ -5,12 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
 // Cloudinary video helper
-const C = (url) => ({
-  src: url,
-  lightboxSrc: url,
-  thumbnail: url.replace(".mp4", ".jpg"),
-  type: "cloudinary",
-});
+// so_0 = capture à la seconde 0, fonctionne même si le nom contient ".mp4"
+const C = (url) => {
+  const thumbnail = url
+    .replace("/video/upload/", "/video/upload/so_0/")
+    .replace(/\.mp4(?=[^.]*$)/, ".jpg");
+  return { src: url, lightboxSrc: url, thumbnail, type: "cloudinary" };
+};
 
 // Vimeo video helper (public videos)
 const V = (id) => ({
