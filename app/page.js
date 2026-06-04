@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
 // Cloudinary video helper
-// so_0 = capture à la seconde 0, fonctionne même si le nom contient ".mp4"
+// so_2 = capture à la seconde 2, fonctionne même si le nom contient ".mp4"
 const C = (url) => {
   const thumbnail = url
-    .replace("/video/upload/", "/video/upload/so_0/")
+    .replace("/video/upload/", "/video/upload/so_2/")
     .replace(/\.mp4(?=[^.]*$)/, ".jpg");
   return { src: url, lightboxSrc: url, thumbnail, type: "cloudinary" };
 };
