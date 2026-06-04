@@ -11,7 +11,7 @@ const V = (id, hash) => {
   return {
     src: `${base}&autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
     lightboxSrc: `${base}&autoplay=1&loop=1&playsinline=1&title=0&byline=0&portrait=0&pip=0&dnt=1&autopause=0`,
-    thumbnail: `https://wsrv.nl/?url=vumbnail.com/${id}.jpg&w=640&output=webp`,
+    thumbnail: `https://vumbnail.com/${id}.jpg`,
     id,
     type: "vimeo",
   };
@@ -172,6 +172,7 @@ function VideoCard({ video, onClick, isMobile, priority }) {
             /* Les 6 premières miniatures visibles → eager, le reste → lazy */
             loading={priority ? "eager" : "lazy"}
             decoding="async"
+            crossOrigin="anonymous"
             style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
           <div style={{
