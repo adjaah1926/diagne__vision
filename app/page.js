@@ -17,8 +17,7 @@ export default function Maintenance() {
           align-items: center;
           justify-content: center;
           text-align: center;
-          padding: 24px;
-          position: relative;
+          padding: 48px 24px 0;
         }
         .mnt .logo {
           height: 88px;
@@ -100,10 +99,8 @@ export default function Maintenance() {
           border-color: var(--accent, #C9A96E);
         }
         .mnt footer {
-          position: absolute;
-          bottom: 28px;
-          left: 0;
-          right: 0;
+          margin-top: auto;
+          padding: 48px 16px 28px;
           font-family: 'Inter', sans-serif;
           font-size: 11px;
           letter-spacing: 3px;
@@ -137,7 +134,7 @@ export default function Maintenance() {
         <a href="https://wa.me/221778722627" target="_blank" rel="noreferrer">
           WhatsApp
         </a>
-        <a
+        
           href="https://www.instagram.com/diagne___vision/"
           target="_blank"
           rel="noreferrer"
