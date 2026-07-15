@@ -22,9 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <head>
-        <link rel="preconnect" href="https://player.vimeo.com" />
-        <link rel="preconnect" href="https://vumbnail.com" />
-        <link rel="dns-prefetch" href="https://player.vimeo.com" />
+        <link rel="preconnect" href="https://pub-e21127710f8b4a2a8d1978ec39181cf4.r2.dev" />
         <link
           rel="preload"
           as="style"

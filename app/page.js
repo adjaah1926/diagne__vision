@@ -6,11 +6,12 @@ import styles from "./page.module.css";
 
 // ─── Cloudflare R2 video helper ──────────────────────────────────────────────
 // Toutes les vidéos sont hébergées sur Cloudflare R2 (bande passante gratuite).
-const R2_BASE = "https://pub-e21127710f8b4a2a8d1978ec39181cf4.r2.dev/Video/";
-const R = (filename) => {
-  const url = R2_BASE + encodeURIComponent(filename);
-  return { src: url, lightboxSrc: url };
-};
+const R2_BASE = "https://pub-e21127710f8b4a2a8d1978ec39181cf4.r2.dev/";
+const R = (filename) => ({
+  src: R2_BASE + "Video/" + encodeURIComponent(filename),
+  lightboxSrc: R2_BASE + "Video/" + encodeURIComponent(filename),
+  poster: R2_BASE + "Video/Thumb/" + encodeURIComponent(filename.replace(/\.mp4$/, ".jpg")),
+});
 
 const categories = ["Tout", "Evénementiel", "Cinematic", "Publicité", "Corporate", "Lifestyle"];
 
@@ -130,13 +131,13 @@ function VideoCard({ video, onClick, isMobile }) {
       {isMobile ? (
         /* ── MOBILE : miniature (1re image de la vidéo) + bouton play ── */
         <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#111" }}>
-          <video
-            src={`${video.src}#t=2`}
-            preload="metadata"
-            muted
-            playsInline
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", pointerEvents: "none" }}
-          />
+          <img
+           src={video.poster}
+           alt={video.name}
+           loading="lazy"
+           decoding="async"
+           style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+           />
           <div style={{
             position: "absolute", inset: 0,
             background: "rgba(0,0,0,0.30)",
@@ -333,7 +334,7 @@ export default function Home() {
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 1 }}
           >
             <source
-              src={`${R2_BASE}hero_duhazc.mp4`}
+              src={`${R2_BASE}Video/hero_duhazc.mp4`}
               type="video/mp4"
             />
           </video>
