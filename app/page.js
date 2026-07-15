@@ -1,33 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./page.module.css";
 
 // ─── Cloudflare R2 video helper ──────────────────────────────────────────────
-// Les vidéos sont hébergées sur Cloudflare R2 (bande passante gratuite).
+// Toutes les vidéos sont hébergées sur Cloudflare R2 (bande passante gratuite).
 const R2_BASE = "https://pub-e21127710f8b4a2a8d1978ec39181cf4.r2.dev/Video/";
 const R = (filename) => {
   const url = R2_BASE + encodeURIComponent(filename);
-  return { src: url, lightboxSrc: url, thumbnail: null, type: "file" };
+  return { src: url, lightboxSrc: url };
 };
-
-// Cloudinary video helper — TEMPORAIRE, uniquement pour les 4 vidéos
-// pas encore migrées sur R2 (voir TODO plus bas).
-const C = (url) => {
-  const thumbnail = url
-    .replace("/video/upload/", "/video/upload/so_2,f_auto,q_auto,w_640/")
-    .replace(/\.mp4(?=[^.]*$)/, ".jpg");
-  return { src: url, lightboxSrc: url, thumbnail, type: "file" };
-};
-
-// Vimeo video helper (public videos)
-const V = (id) => ({
-  src: `https://player.vimeo.com/video/${id}?autoplay=1&muted=1&loop=1&background=1&playsinline=1`,
-  lightboxSrc: `https://player.vimeo.com/video/${id}?autoplay=1&loop=1&playsinline=1&title=0&byline=0&portrait=0&pip=0&dnt=1&autopause=0`,
-  thumbnail: `https://vumbnail.com/${id}_large.jpg`,
-  type: "vimeo",
-});
 
 const categories = ["Tout", "Evénementiel", "Cinematic", "Publicité", "Corporate", "Lifestyle"];
 
@@ -37,12 +20,10 @@ const projects = [
     title: "Evénementiel",
     category: "Evénementiel",
     videos: [
-      // TODO : ces 3 vidéos ne sont pas encore sur R2.
-      // Télécharge-les depuis Cloudinary, uploade-les dans le dossier Video/
-      // du bucket R2, puis remplace C("...") par R("nom_du_fichier.mp4").
-     { name: "Festival IPP",        ...R("ipp__festival_entre_potes.mp4_v1_360p_mhsqtu.mp4") },
-     { name: "Kankourang de Mbour", ...R("kankourang_de_mbour_v1_360p_cx9vlt.mp4") },
-     { name: "Magal de Touba",  ...R("magal_touba_v1_360p_vr7xfu.mp4") },
+      { name: "Festival IPP",        ...R("ipp__festival_entre_potes.mp4_v1_360p_mhsqtu.mp4") },
+      { name: "Kankourang de Mbour", ...R("kankourang_de_mbour_v1_360p_cx9vlt.mp4") },
+      { name: "Magal de Touba",      ...R("magal_touba_v1_360p_vr7xfu.mp4") },
+    ],
   },
   {
     id: 2,
@@ -50,9 +31,9 @@ const projects = [
     category: "Evénementiel",
     year: "2025",
     videos: [
-      { name: "Ndiaye's Wedding",                 ...V("1198213193") },
-      { name: "Fatima's Wedding",                 ...V("1198224228") },
-      { name: "L'histoire de Mariam et Ibrahima", ...V("1198233916") },
+      { name: "Ndiaye's Wedding",                 ...R("ndiaye_wedding.mp4") },
+      { name: "Fatima's Wedding",                 ...R("fatima_wedding.mp4") },
+      { name: "L'histoire de Mariam et Ibrahima", ...R("mariam_ibrahima.mp4") },
     ],
   },
   {
@@ -100,8 +81,7 @@ const projects = [
     title: "Placement de produit",
     category: "Publicité",
     videos: [
-      // TODO : "Mila collection" n'est pas encore sur R2 (voir note plus haut).
-      { name: "Mila collection", ...R("mila.mp4_v1_540p_wb6fdr.mp4") },,
+      { name: "Mila collection", ...R("mila.mp4_v1_540p_wb6fdr.mp4") },
       { name: "Splash",          ...R("splash_v1_540p_lskfuu.mp4") },
       { name: "Sucre Mame Boy",  ...R("sucre_mame_boyy_v1_1080p_jqendl.mp4") },
     ],
@@ -122,7 +102,7 @@ const projects = [
     category: "Corporate",
     videos: [
       { name: "Fondation Lumière de Demain", ...R("fondation_lumière_de_demain_v1_540p_patuk8.mp4") },
-      { name: "Cité COUD",                   ...V("1198213529") },
+      { name: "Cité COUD",                   ...R("cite_coud.mp4") },
       { name: "COUD",                        ...R("coud_v1_1080p_wbrcuc.mp4") },
     ],
   },
@@ -139,67 +119,24 @@ const projects = [
 ];
 
 // ─── VideoCard ────────────────────────────────────────────────────────────────
-function VideoCard({ video, onClick, isMobile, priority }) {
-  const containerRef = useRef(null);
-  const iframeRef    = useRef(null);
-
-  useEffect(() => {
-    if (isMobile || video.type !== "vimeo") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && iframeRef.current) {
-            try {
-              iframeRef.current.contentWindow.postMessage(
-                JSON.stringify({ method: "play" }),
-                "https://player.vimeo.com"
-              );
-            } catch {
-              const src = iframeRef.current.src;
-              iframeRef.current.src = "";
-              setTimeout(() => { if (iframeRef.current) iframeRef.current.src = src; }, 50);
-            }
-          }
-        });
-      },
-      { threshold: 0 }
-    );
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [isMobile, video.type]);
-
+function VideoCard({ video, onClick, isMobile }) {
   return (
     <motion.div
-      ref={containerRef}
       className={styles.videoCard}
       whileHover={{ y: -4 }}
       onClick={onClick}
       style={{ cursor: "pointer", position: "relative" }}
     >
       {isMobile ? (
-        /* ── MOBILE : miniature + bouton play ── */
+        /* ── MOBILE : miniature (1re image de la vidéo) + bouton play ── */
         <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", overflow: "hidden", background: "#111" }}>
-          {video.thumbnail ? (
-            /* Vimeo (ou Cloudinary temporaire) : miniature image */
-            <img
-              src={video.thumbnail}
-              alt={video.name}
-              loading={priority ? "eager" : "lazy"}
-              decoding="async"
-              onError={(e) => { e.target.src = "/placeholder.jpg"; }}
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
-            />
-          ) : (
-            /* R2 : le navigateur affiche la 1re image de la vidéo,
-               preload="metadata" ne télécharge que quelques Ko */
-            <video
-              src={`${video.src}#t=0.5`}
-              preload="metadata"
-              muted
-              playsInline
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", pointerEvents: "none" }}
-            />
-          )}
+          <video
+            src={`${video.src}#t=2`}
+            preload="metadata"
+            muted
+            playsInline
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", pointerEvents: "none" }}
+          />
           <div style={{
             position: "absolute", inset: 0,
             background: "rgba(0,0,0,0.30)",
@@ -222,24 +159,14 @@ function VideoCard({ video, onClick, isMobile, priority }) {
           </div>
         </div>
       ) : (
-        /* ── DESKTOP ── */
+        /* ── DESKTOP : aperçu en lecture automatique ── */
         <>
-          {video.type !== "vimeo" ? (
-            <video
-              src={video.src}
-              autoPlay muted loop playsInline
-              preload="metadata"
-              style={{ width: "100%", aspectRatio: "16/9", border: "none", display: "block", objectFit: "cover", pointerEvents: "none" }}
-            />
-          ) : (
-            <iframe
-              ref={iframeRef}
-              src={video.src}
-              style={{ width: "100%", aspectRatio: "16/9", border: "none", display: "block", pointerEvents: "none" }}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
-          )}
+          <video
+            src={video.src}
+            autoPlay muted loop playsInline
+            preload="metadata"
+            style={{ width: "100%", aspectRatio: "16/9", border: "none", display: "block", objectFit: "cover", pointerEvents: "none" }}
+          />
           <div style={{ position: "absolute", inset: 0, zIndex: 1, cursor: "pointer" }} />
         </>
       )}
@@ -283,22 +210,13 @@ function Lightbox({ video, onClose, isMobile }) {
         }}
       >
         <div style={{ position: "relative", width: "100%", aspectRatio: "16/9" }}>
-          {video.type !== "vimeo" ? (
-            <video
-              src={video.lightboxSrc}
-              autoPlay
-              controls
-              playsInline
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block", background: "#000", objectFit: "contain" }}
-            />
-          ) : (
-            <iframe
-              src={video.lightboxSrc}
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }}
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
-          )}
+          <video
+            src={video.lightboxSrc}
+            autoPlay
+            controls
+            playsInline
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block", background: "#000", objectFit: "contain" }}
+          />
         </div>
         <div className={styles.lightboxInfo}>
           <h3 style={{ fontSize: "18px", fontWeight: "700" }}>{video.name}</h3>
@@ -534,7 +452,6 @@ export default function Home() {
                     key={j}
                     video={video}
                     isMobile={isMobile}
-                    priority={i < 2}
                     onClick={() => setSelectedVideo(video)}
                   />
                 ))}
